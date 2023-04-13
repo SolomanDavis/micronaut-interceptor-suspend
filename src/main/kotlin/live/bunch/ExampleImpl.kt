@@ -9,13 +9,14 @@ import live.bunch.interceptor.FaultyInterceptorAnnotation
 @Singleton
 @FaultyInterceptorAnnotation
 class ExampleImpl {
-    suspend fun suspendFunc(): Boolean = coroutineScope {
+    suspend fun suspendFunc(passes: Boolean): Boolean = coroutineScope {
         val deferred = async {
             delay(500)
             return@async "OK"
         }
         val result = deferred.await()
         println("printing result so kotlin doesn't optimize deferred - $result")
+        if(passes) return@coroutineScope true
         throw RuntimeException("RUNTIME EXCEPTION THAT SHOULD BE THROWN AND CAUGHT")
     }
 }
